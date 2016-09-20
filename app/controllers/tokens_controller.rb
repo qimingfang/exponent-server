@@ -7,20 +7,14 @@ class TokensController < ApplicationController
 
     @token = Token.where('user_id = ?', params[:token][:user_id]).first
 
-    if @token.present?
-      message = 'Welcome back!'
-    else
+    if !@token.present?
       @token = Token.create(token_params)
-      message = 'Welcome to Exponent'
+      exponent.publish(
+        exponentPushToken: @token.value,
+        message: 'Welcome!',
+        data: {a: 'Welcome!'}
+      )
     end
-
-    puts message
-
-    exponent.publish(
-      exponentPushToken: @token.value,
-      message: message,
-      data: {a: 'New nudge!'}
-    )
 
     render json: {success: true}
   end
