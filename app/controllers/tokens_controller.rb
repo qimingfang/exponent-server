@@ -29,6 +29,7 @@ class TokensController < ApplicationController
     Token.all.each do |token|
       exponent.publish(
         exponentPushToken: token.value,
+        message: 'New nudge!!',
         data: {a: 'New nudge!'}
       )
     end
