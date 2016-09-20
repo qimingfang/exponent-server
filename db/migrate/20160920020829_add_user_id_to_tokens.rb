@@ -1,5 +1,5 @@
 class AddUserIdToTokens < ActiveRecord::Migration
   def change
-    add_column :Token, :user_id, :string
+    add_column :tokens, :user_id, :string
   end
 end
