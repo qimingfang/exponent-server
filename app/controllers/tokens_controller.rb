@@ -5,7 +5,7 @@ class TokensController < ApplicationController
   def create
     message = ''
 
-    @token = Token.where('value = ? AND user_id = ?', params[:token][:value], params[:token][:user_id]).first
+    @token = Token.where('user_id = ?', params[:token][:user_id]).first
 
     if @token.present?
       message = 'Welcome back!'
@@ -21,6 +21,17 @@ class TokensController < ApplicationController
       message: message,
       data: {a: 'New nudge!'}
     )
+
+    render json: {success: true}
+  end
+
+  def notify
+    Token.all.each do |token|
+      exponent.publish(
+        exponentPushToken: token.value,
+        data: {a: 'New nudge!'}
+      )
+    end
 
     render json: {success: true}
   end
