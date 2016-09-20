@@ -5,9 +5,7 @@ class TokensController < ApplicationController
   def create
     message = ''
 
-    # You probably actually want to associate this with a user,
-    # otherwise it's not particularly useful
-    @token = Token.where(value: params[:token][:value]).first
+    @token = Token.where('value = ? AND user_id = ?', params[:token][:value], params[:token][:user_id]).first
 
     if @token.present?
       message = 'Welcome back!'
@@ -16,10 +14,12 @@ class TokensController < ApplicationController
       message = 'Welcome to Exponent'
     end
 
+    puts message
+
     exponent.publish(
       exponentPushToken: @token.value,
       message: message,
-      data: {a: 'b'}, # Any arbitrary data to include with the notification
+      data: {a: 'New nudge!'}
     )
 
     render json: {success: true}
@@ -28,7 +28,7 @@ class TokensController < ApplicationController
   private
 
   def token_params
-    params.require(:token).permit(:value)
+    params.require(:token).permit(:value, :user_id)
   end
 
   def exponent
